@@ -1,24 +1,25 @@
 import datetime
+from typing import Any
 
 from src.hh import HH
 from src.vacancy import Vacancy
 
 
-def legit_vacancies(keyword=None, page=1, per_page=50):
+def legit_vacancies(keyword: Any = None, page: int = 1, per_page: int = 50) -> list | str:
     """
     Получение вакансий
     """
     return HH(page=page, per_page=per_page, keyword=keyword).get_vacancies()
 
 
-def vacancies(hh_list):
+def vacancies(hh_list: list) -> list:
     """
     Преобразователь
     """
     return Vacancy.load_vacancy(hh_list)
 
 
-def key_sorted_function(item):
+def key_sorted_function(item: dict) -> int:
     """
     Получение значений для сортировки списка по зарплате
     """
@@ -33,16 +34,18 @@ def key_sorted_function(item):
         return salary["from"]
     elif salary["to"] and not salary["from"]:
         return salary["to"]
+    else:
+        return 0
 
 
-def sorted_vacancy(sorted_list, ascending=True):
+def sorted_vacancy(sorted_list: list, ascending: bool = True) -> list:
     """
     Сортировка списка по зарплате
     """
     return sorted(sorted_list, key=key_sorted_function, reverse=ascending)
 
 
-def salary_range(range_list, data_range):
+def salary_range(range_list: list, data_range: str) -> list | str:
     """
     Диапазон зарплат
     """
@@ -81,7 +84,7 @@ def salary_range(range_list, data_range):
     return salary_list
 
 
-def load_vacancies(search_list):
+def load_vacancies(search_list: list) -> str:
     """
     Пользовательский формат вакансий
     """
@@ -100,7 +103,7 @@ def load_vacancies(search_list):
     return vacancy_string
 
 
-def greeting_function():
+def greeting_function() -> str:
     date_time = datetime.datetime.now().time()
     if datetime.time(5, 0, 0) <= date_time < datetime.time(11, 0, 0):
         return "Доброе утро!"

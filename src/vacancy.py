@@ -50,7 +50,7 @@ class Vacancy:
         if self.__salary_from < 0 or self.__salary_to < 0:
             raise SalaryZeroException
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         Форматирование
         """
@@ -84,7 +84,7 @@ class Vacancy:
         other_object = self.__isinstance_function(other)
         return self.__salary_from == other_object
 
-    def __get_salary(self):
+    def __get_salary(self) -> str | int:
         """
         Установка значений зарплатного диапазона
         """
@@ -100,36 +100,39 @@ class Vacancy:
             return f"от {self.__salary_from} до {self.__salary_to}"
 
     @staticmethod
-    def load_vacancy(data):
+    def load_vacancy(data: list) -> list | str:
         """
         Получение нужного по критериям списка вакансий
         """
         vacancies = []
-        for stack in data:
-            name = stack.get("name")
-            area = stack.get("area", {}).get("name")
-            experience = stack.get("experience", {}).get("name")
-            salary_from = stack.get("salary", {}).get("from") if stack.get("salary") else 0
-            salary_to = stack.get("salary", {}).get("to") if stack.get("salary") else 0
-            currency = stack.get("salary", {}).get("currency") if stack.get("salary") else "RUR"
-            alternate_url = stack.get("alternate_url") if stack.get("alternate_url") else "Ссылка отсутствует"
-            snippet = (
-                stack.get("snippet", {}).get("responsibility") if stack.get("snippet") else "Требования не указаны"
-            )
-            vacancy = Vacancy(
-                name=name,
-                area=area,
-                experience=experience,
-                salary_from=salary_from,
-                salary_to=salary_to,
-                currency=currency,
-                alternate_url=alternate_url,
-                snippet=snippet,
-            )
-            vacancies.append(vacancy.__to_dict())
-        return vacancies
+        if isinstance(data, list):
+            for stack in data:
+                name = stack.get("name")
+                area = stack.get("area", {}).get("name")
+                experience = stack.get("experience", {}).get("name")
+                salary_from = stack.get("salary", {}).get("from") if stack.get("salary") else 0
+                salary_to = stack.get("salary", {}).get("to") if stack.get("salary") else 0
+                currency = stack.get("salary", {}).get("currency") if stack.get("salary") else "RUR"
+                alternate_url = stack.get("alternate_url") if stack.get("alternate_url") else "Ссылка отсутствует"
+                snippet = (
+                    stack.get("snippet", {}).get("responsibility") if stack.get("snippet") else "Требования не указаны"
+                )
+                vacancy = Vacancy(
+                    name=name,
+                    area=area,
+                    experience=experience,
+                    salary_from=salary_from,
+                    salary_to=salary_to,
+                    currency=currency,
+                    alternate_url=alternate_url,
+                    snippet=snippet,
+                )
+                vacancies.append(vacancy.__to_dict())
+            return vacancies
+        else:
+            return "Данные не валидны!"
 
-    def __to_dict(self):
+    def __to_dict(self) -> dict:
         """
         Приведение вакансий к более удобному формату
         """

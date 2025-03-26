@@ -2,6 +2,7 @@ import json
 from abc import ABC, abstractmethod
 
 import requests
+from requests import Response
 
 
 class BaseHH(ABC):
@@ -10,7 +11,7 @@ class BaseHH(ABC):
     """
 
     @abstractmethod
-    def get_vacancies(self):
+    def get_vacancies(self) -> str | list:
         pass
 
 
@@ -28,22 +29,18 @@ class HH(BaseHH):
         self.__params = {"text": keyword, "page": self.__page, "per_page": self.__per_page}
         self.__vacancies = []
 
-    def __connect_api(self):
+    def __connect_api(self) -> Response:
         """
         Подключение к API
         """
         return requests.get(self.__url, self.__params)
 
-    def get_vacancies(self):
+    def get_vacancies(self) -> str | list:
         """
         Получение результата запроса
         """
-        try:
-            result = self.__connect_api()
-            if result.status_code != 200:
-                return f"Ошибка {result.status_code}!"
+        result = self.__connect_api()
+        if result.status_code != 200:
+            return f"Ошибка {result.status_code}!"
+        else:
             return json.loads(result.text).get("items")
-        except requests.exceptions.MissingSchema:
-            print("Пожайлуста убедитесь что вы передаете правильный адрес!")
-        except requests.exceptions.InvalidSchema:
-            print("Ваш запрос не соответсвует схеме!")

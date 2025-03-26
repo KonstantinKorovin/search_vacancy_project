@@ -7,26 +7,27 @@ from src.json_saver import JsonSaver, PATH_TO_JSON
 from src.user_main_function import greeting_function, legit_vacancies, vacancies, load_vacancies, salary_range, \
     sorted_vacancy
 from src.vacancy import Vacancy
+from typing import Any
 
 
-def watch(user_input):
+def watch(user_input: Any) -> list | str:
     """
     Просмотр вакансий
     """
     try:
         if re.fullmatch(r"\d+", user_input):
-            print(load_vacancies(vacancies(legit_vacancies(page=user_input))))
+            return load_vacancies(vacancies(legit_vacancies(page=user_input)))
         elif not re.fullmatch(r"\d+", user_input) \
                 and not re.fullmatch("exit", user_input, flags=re.I):
-            print("Номер страницы может представлять из себя только число!")
+            return "Номер страницы может представлять из себя только число!"
         else:
             return []
 
-    except AttributeError:
-        print(f"Пожалуйста указывайте корректный номер страницы, например ({random.randint(1, 39)})")
+    except (AttributeError, TypeError):
+        return f"Пожалуйста указывайте корректный номер страницы, например ({random.randint(1, 39)})"
 
 
-def key_vacancies(key_word):
+def key_vacancies(key_word: Any) -> list:
     """
     Сортировка вакансий по ключевому слову
     """
@@ -47,7 +48,7 @@ def key_vacancies(key_word):
         return []
 
 
-def filter_vacancies(filter_word, filter_list):
+def filter_vacancies(filter_word: Any, filter_list: list) -> list:
     """
     Сортировка вакансий по ключевому слову
     """
@@ -67,7 +68,7 @@ def filter_vacancies(filter_word, filter_list):
         return []
 
 
-def sorted_vacancies(sorted_word, sorted_list):
+def sorted_vacancies(sorted_word: Any, sorted_list: list) -> list:
     """
     Сортировка вакансий по ключевому слову
     """
@@ -88,7 +89,7 @@ def sorted_vacancies(sorted_word, sorted_list):
         return []
 
 
-def file_worker(file_word, file_list):
+def file_worker(file_word: Any, file_list: list) -> list | str:
     """
     Работа с файлом
     """
@@ -144,9 +145,11 @@ def file_worker(file_word, file_list):
                     print("Введите название вакансии:")
 
                     vacancy_input = input()
-                    return JsonSaver().json_file_deleter(vacancy_input, true_path)
+                    print(JsonSaver().json_file_deleter(vacancy_input, true_path))
+                    return "Удаление вакансий..."
                 elif re.fullmatch("2", del_input_one):
-                    return JsonSaver().json_file_deleter(path=true_path)
+                    print(JsonSaver().json_file_deleter(path=true_path))
+                    return "Очистка файла..."
                 else:
                     print("Ошибка удаления!")
                     return "Попробуйте снова!"
@@ -158,13 +161,13 @@ def file_worker(file_word, file_list):
             print("Файл не существует!")
             return []
     elif re.fullmatch("exit", file_word, flags=re.I):
-        print("Выхожу из программы...")
+        return "Выхожу из программы..."
     else:
         print("Введите 1 или 2!")
         return []
 
 
-def finally_user_function(finally_word):
+def finally_user_function(finally_word: Any) -> list | str:
     """
     Результат работы программы
     """
@@ -190,15 +193,16 @@ def finally_user_function(finally_word):
                 return []
             else:
                 return vacancies_list
+        elif re.fullmatch("exit", finally_word, flags=re.I):
+            return "Завершение работы..."
+        else:
+            return "Введите 1 или exit!"
 
     except (FileNotFoundError, JSONDecodeError):
-        print("Ошибка чтения файла, Убедитесь в существовании файла, или в том что вы передаете правильный путь!")
-
-    if re.fullmatch("exit", finally_word, flags=re.I):
-        print("Завершение работы...")
+        return "Ошибка чтения файла, Убедитесь в существовании файла, или в том что вы передаете правильный путь!"
 
 
-def main():
+def main() -> str:
     """
     User function
     """
@@ -231,11 +235,12 @@ Eсли вы готовы приступить к подбору ваканси�
         while True:
             print("Какая страница вас интересует?")
             str_input = input()
-            watch(str_input)
             if re.fullmatch("exit", str_input, flags=re.I):
                 print("Выхожу из программы...")
                 time.sleep(3)
                 return "Надеюсь вы нашли что нибудь для себя, хорошего дня!"
+            else:
+                print(watch(str_input))
     elif not status:
         print("""Хотите использовать ключевые слова при поиске? Например название вакансии или требования к сотрудникам
 Введите Да или Нет:""")

@@ -2,6 +2,7 @@ import json
 import os.path
 import re
 from abc import ABC, abstractmethod
+from typing import Any
 
 from src.vacancy import Vacancy
 
@@ -41,7 +42,7 @@ class JsonSaver(BaseJsonSaver):
 
         self.__base_path = PATH_TO_JSON
 
-    def __json_validate(self, path=None):
+    def __json_validate(self, path: Any = None) -> str:
         """
         Валидация пути к файлу
         """
@@ -55,7 +56,7 @@ class JsonSaver(BaseJsonSaver):
             )
         return path
 
-    def json_file_reader(self, path=None):
+    def json_file_reader(self, path: Any = None) -> list:
         """
         Чтение файла
         """
@@ -66,7 +67,7 @@ class JsonSaver(BaseJsonSaver):
         except (json.JSONDecodeError, FileNotFoundError):
             return []
 
-    def json_file_parser(self, vacancy_example, path=None):
+    def json_file_parser(self, vacancy_example: Any, path: Any = None) -> str:
         """
         Парсинг данных
         """
@@ -106,7 +107,7 @@ class JsonSaver(BaseJsonSaver):
                     if vacancy_example not in vacancies:
                         vacancies.append(vacancy_example)
                         json.dump(vacancies, file, ensure_ascii=False, indent=4)
-                        if len(vacancies) > self.json_file_reader(legit_path):
+                        if len(vacancies) > len(self.json_file_reader(legit_path)):
                             return "Запись в файл..."
                         else:
                             return "В файл ничего не записалось, полученные вами вакансии уже есть в файле!"
@@ -116,13 +117,13 @@ class JsonSaver(BaseJsonSaver):
                     return "Критическая ошибка при попытке добавления вакансии, попробуйте снова!"
 
     @staticmethod
-    def __to_dict(example):
+    def __to_dict(example: Any) -> dict:
         """
         Преобразователь
         """
         return dict(ex.split(": ") for ex in str(example).split(", "))
 
-    def json_file_deleter(self, name=None, path=None):
+    def json_file_deleter(self, name: Any = None, path: Any = None) -> str:
         """
         Делитер
         """
@@ -152,4 +153,7 @@ class JsonSaver(BaseJsonSaver):
                     file.truncate(0)
             if status:
                 return "Удаление вакансий..."
-            return "Ничего не найдено!"
+            else:
+                return "Ничего не найдено!"
+        else:
+            return "Критическая ошибка работы программы, попробуйте снова!"
